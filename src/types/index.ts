@@ -1,4 +1,4 @@
-import type { ReservationStatus } from "../../app/generated/prisma/enums";
+import type { ReservationStatus } from "../app/generated/prisma/enums";
 
 export type { ReservationStatus };
 

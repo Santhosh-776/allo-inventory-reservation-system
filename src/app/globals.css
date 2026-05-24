@@ -1103,3 +1103,8 @@ tr:hover td {
         font-size: clamp(1.6rem, 7vw, 2.2rem);
     }
 }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+

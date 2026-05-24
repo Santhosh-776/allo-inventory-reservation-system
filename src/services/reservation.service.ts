@@ -3,7 +3,6 @@ import { logger } from "../utils/logger";
 import { withLock } from "../utils/redis";
 import { AppError } from "../utils/AppError";
 import { ReservationWithDetails } from "../types";
-import { ReservationStatus } from "../../app/generated/prisma/enums";
 
 const RESERVATION_TTL_MINUTES = 10;
 const LOCK_TTL_SECONDS = 30;

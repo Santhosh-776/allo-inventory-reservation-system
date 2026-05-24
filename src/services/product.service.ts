@@ -1,7 +1,8 @@
 import prisma from "../lib/prisma";
 import { logger } from "../utils/logger";
 import { ProductWithInventory, PaginationMeta } from "../types";
-import type { Prisma } from "../../app/generated/prisma/client";
+import { Prisma } from "../app/generated/prisma/client";
+
 
 interface ListProductsParams {
     page: number;
@@ -139,4 +140,51 @@ export async function getProductById(
             availableStock: inv.totalStock - inv.reservedStock,
         })),
     };
+}
+
+/**
+ * Creates a new product.
+ */
+export async function createProduct(
+    data: {
+        name: string;
+        sku: string;
+        description?: string;
+        price: number;
+        category?: string;
+        imageUrl?: string;
+    },
+) {
+    const product = await prisma.product.create({
+        data: {
+            name: data.name,
+            sku: data.sku,
+            description: data.description,
+            price: new Prisma.Decimal(data.price),
+            category: data.category,
+            imageUrl: data.imageUrl,
+            isActive: true,
+        },
+    });
+
+    logger.info("Product created", { productId: product.id, sku: product.sku });
+
+    return {
+        ...product,
+        price: product.price.toString(),
+    };
+}
+
+/**
+ * Soft deletes a product by marking it as inactive.
+ */
+export async function deleteProduct(productId: string) {
+    const product = await prisma.product.update({
+        where: { id: productId },
+        data: { isActive: false },
+    });
+
+    logger.info("Product deleted", { productId: product.id, sku: product.sku });
+
+    return product;
 }

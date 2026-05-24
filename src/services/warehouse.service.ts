@@ -66,3 +66,50 @@ export async function getWarehouseById(
         totalSkus: warehouse.inventories.length,
     };
 }
+
+/**
+ * Returns all inventory records across all warehouses.
+ * Used by the admin inventory route.
+ */
+export async function getAllInventory() {
+    const records = await prisma.inventory.findMany({
+        include: {
+            product: { select: { id: true, name: true, sku: true } },
+            warehouse: { select: { id: true, name: true, code: true, city: true } },
+        },
+        orderBy: { updatedAt: "desc" },
+    });
+
+    return records.map((inv) => ({
+        ...inv,
+        availableStock: inv.totalStock - inv.reservedStock,
+    }));
+}
+
+/**
+ * Updates the total and reserved stock for a product-warehouse pair.
+ * Used by the admin inventory management route.
+ */
+export async function updateInventory(
+    productId: string,
+    warehouseId: string,
+    totalStock: number,
+    reservedStock: number,
+) {
+    const updated = await prisma.inventory.upsert({
+        where: { productId_warehouseId: { productId, warehouseId } },
+        update: { totalStock, reservedStock },
+        create: { productId, warehouseId, totalStock, reservedStock },
+        include: {
+            product: { select: { id: true, name: true, sku: true } },
+            warehouse: { select: { id: true, name: true, code: true, city: true } },
+        },
+    });
+
+    logger.info("Inventory updated", { productId, warehouseId, totalStock, reservedStock });
+
+    return {
+        ...updated,
+        availableStock: updated.totalStock - updated.reservedStock,
+    };
+}
