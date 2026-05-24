@@ -1,7 +1,7 @@
-import { prisma } from "../utils/prisma";
+import prisma from "../lib/prisma";
 import { logger } from "../utils/logger";
 import { ProductWithInventory, PaginationMeta } from "../types";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "../../app/generated/prisma/client";
 
 interface ListProductsParams {
     page: number;

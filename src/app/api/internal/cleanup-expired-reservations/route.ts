@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cleanupExpiredReservations } from "../services/reservation.service";
-import { sendSuccess, sendError } from "../utils/response";
-import { logger } from "../utils/logger";
+import { cleanupExpiredReservations } from "../../../../services/reservation.service";
+import { sendSuccess, sendError } from "../../../../utils/response";
+import { logger } from "../../../../utils/logger";
 
 /**
  * POST /api/internal/cleanup-expired-reservations
